@@ -5,7 +5,6 @@ Version:       XXX
 Release:       XXX
 Summary:       Dashboard for CloudKitty
 License:       ASL 2.0
-Group:         System Environment/Base
 URL:           http://github.com/stackforge/cloudkitty-dashboard
 Source0:       http://tarballs.openstack.org/cloudkitty-dashboard/cloudkitty-dashboard-master.tar.gz
 
