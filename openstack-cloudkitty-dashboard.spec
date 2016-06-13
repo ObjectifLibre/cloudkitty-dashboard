@@ -23,21 +23,21 @@ Requires:      python-cloudkittyclient
 %setup -q -n cloudkitty-dashboard-%{upstream_version}
 
 %build
-%{__python2} setup.py build
+%{__python} setup.py build
 
 %install
-%{__python2} setup.py install -O1 --skip-build --root=%{buildroot}
+%{__python} setup.py install -O1 --skip-build --root=%{buildroot}
 mkdir -p %{buildroot}/usr/share/openstack-dashboard/openstack_dashboard/enabled
-( cd %{buildroot}%{python2_sitelib}/cloudkittydashboard/enabled/ ; \
+( cd %{buildroot}%{python_sitelib}/cloudkittydashboard/enabled/ ; \
   for i in _[0-9]*; do \
-    ln -s %{python2_sitelib}/cloudkittydashboard/enabled/$i \
+    ln -s %{python_sitelib}/cloudkittydashboard/enabled/$i \
       %{buildroot}/usr/share/openstack-dashboard/openstack_dashboard/enabled/; \
   done )
 
 %files
 %license LICENSE
-%{python2_sitelib}/cloudkittydashboard
-%{python2_sitelib}/cloudkitty_dashboard-%{upstream_version}-py?.?.egg-info
+%{python_sitelib}/cloudkittydashboard
+%{python_sitelib}/cloudkitty_dashboard-%{upstream_version}-py?.?.egg-info
 %{_datarootdir}/openstack-dashboard/openstack_dashboard/enabled
 
 %description
