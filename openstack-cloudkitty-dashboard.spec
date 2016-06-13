@@ -1,46 +1,76 @@
-%{!?upstream_version: %global upstream_version %{version}}
+%global pypi_name cloudkitty-dashboard
+%global mod_name cloudkittydashboard
 
-Name:          openstack-cloudkitty-dashboard
-Version:       XXX
-Release:       XXX
-Summary:       Dashboard for CloudKitty
-License:       ASL 2.0
-URL:           http://github.com/stackforge/cloudkitty-dashboard
-Source0:       http://tarballs.openstack.org/cloudkitty-dashboard/cloudkitty-dashboard-master.tar.gz
+# tests are disabled by default
+%bcond_with tests
+
+Name:         openstack-cloudkitty-ui
+Version:      XXX
+Release:      XXX
+Summary:      The UI component for the CloudKitty service
+
+License:      ASL 2.0
+URL:          https://github.com/openstack/%{pypi_name}
+Source0:      http://tarballs.openstack.org/%{pypi_name}/%{pypi_name}-%{upstream_version}.tar.gz
 
 BuildArch:     noarch
 
+BuildRequires: python2-devel
+BuildRequires: python-setuptools
+BuildRequires: python-pbr
+BuildRequires: python-sphinx
+BuildRequires: python-oslo-sphinx
 BuildRequires: git
 BuildRequires: python-cloudkittyclient
-BuildRequires: python-keystoneclient
-BuildRequires: python-sphinx
-BuildRequires: python-pbr
 
-Requires:      openstack-dashboard
-Requires:      python-cloudkittyclient
+BuildRequires: gettext
 
-%prep
-%setup -q -n cloudkitty-dashboard-%{upstream_version}
-
-%build
-%{__python} setup.py build
-
-%install
-%{__python} setup.py install -O1 --skip-build --root=%{buildroot}
-mkdir -p %{buildroot}/usr/share/openstack-dashboard/openstack_dashboard/enabled
-( cd %{buildroot}%{python_sitelib}/cloudkittydashboard/enabled/ ; \
-  for i in _[0-9]*; do \
-    ln -s %{python_sitelib}/cloudkittydashboard/enabled/$i \
-      %{buildroot}/usr/share/openstack-dashboard/openstack_dashboard/enabled/; \
-  done )
-
-%files
-%license LICENSE
-%{python_sitelib}/cloudkittydashboard
-%{python_sitelib}/cloudkitty_dashboard-%{upstream_version}-py?.?.egg-info
-%{_datarootdir}/openstack-dashboard/openstack_dashboard/enabled
+Requires: openstack-dashboard
+Requires: python-pbr
+Requires: python-cloudkittyclient
 
 %description
-OpenStack Rating-as-a-Service - Dashboard
+openstack-cloudkitty-ui is a dashboard for CloudKitty
+
+%package doc
+Summary: Documentation for the CloudKitty dashboard
+%description doc
+Documentation files for the CloudKitty dashboard
+
+%prep
+%autosetup -n %{pypi_name}-%{upstream_version} -S git
+
+# Let RPM handle the dependencies
+rm -rf {test-,}requirements.txt
+
+
+%build
+# build
+%py2_build
+# Build html documentation
+sphinx-build doc/source html
+
+%install
+%py2_install
+
+# Move config to horizon
+mkdir -p %{buildroot}%{_datadir}/openstack-dashboard/openstack_dashboard/local/enabled/
+install -p -D -m 640 %{mod_name}/enabled/_[0-9]* %{buildroot}%{_datadir}/openstack-dashboard/openstack_dashboard/local/enabled/
+
+%check
+%if 0%{?with_test}
+%{__python2} setup.py test
+%endif
+
+%files
+%doc README.rst
+%license LICENSE
+%{python2_sitelib}/%{mod_name}
+%{python2_sitelib}/*.egg-info
+%{_datadir}/openstack-dashboard/openstack_dashboard/local/enabled/_[0-9]*
+
+%files doc
+%doc html
+%license LICENSE
 
 %changelog
