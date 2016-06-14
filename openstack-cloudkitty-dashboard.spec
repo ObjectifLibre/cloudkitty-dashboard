@@ -49,6 +49,8 @@ rm -rf {test-,}requirements.txt
 %py2_build
 # Build html documentation
 sphinx-build doc/source html
+# Remove the sphinx-build leftovers
+rm -rf html/.{doctrees,buildinfo}
 
 %install
 %py2_install
