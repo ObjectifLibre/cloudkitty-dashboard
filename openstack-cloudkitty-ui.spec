@@ -1,3 +1,5 @@
+%{!?upstream_version: %global upstream_version %{version}%{?milestone}}
+
 %global pypi_name cloudkitty-dashboard
 %global mod_name cloudkittydashboard
 
@@ -5,8 +7,8 @@
 %bcond_with tests
 
 Name:         openstack-cloudkitty-ui
-Version:      XXX
-Release:      XXX
+Version:      0.5.0
+Release:      1
 Summary:      The UI component for the CloudKitty service
 
 License:      ASL 2.0
